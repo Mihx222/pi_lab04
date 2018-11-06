@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
+from random import randint
 
 
 #   Game score
@@ -55,7 +56,61 @@ def check_for_choice():
 
 #   Game logic
 def simulate_game():
-    messagebox.showinfo("Game engine", "Simulating...")
+    bot_element_choice = randint(1, 5)
+
+#   Dynamically update bot choice
+    if bot_element_choice == 1:
+        bot_choice_label.config(fg="black", text="Bot chose: Rock")
+        bot_element_choice_text = "Rock"
+    elif bot_element_choice == 2:
+        bot_choice_label.config(fg="black", text="Bot chose: Paper")
+        bot_element_choice_text = "Paper"
+    elif bot_element_choice == 3:
+        bot_choice_label.config(fg="black", text="Bot chose: Scissors")
+        bot_element_choice_text = "Scissors"
+    elif bot_element_choice == 4:
+        bot_choice_label.config(fg="black", text="Bot chose: Spock")
+        bot_element_choice_text = "Spock"
+    else:
+        bot_choice_label.config(fg="black", text="Bot chose: Lizard")
+        bot_element_choice_text = "Lizard"
+
+#   Check and filter input
+    if ((choice.get() == "Rock" and bot_element_choice == 2) or
+        (choice.get() == "Paper" and bot_element_choice == 1) or
+        (choice.get() == "Paper" and bot_element_choice == 4) or
+        (choice.get() == "Spock" and bot_element_choice == 2)):
+        result = "Paper"
+    elif ((choice.get() == "Rock" and bot_element_choice == 3) or
+          (choice.get() == "Scissors" and bot_element_choice == 1) or
+          (choice.get() == "Rock" and bot_element_choice == 5) or
+          (choice.get() == "Lizard" and bot_element_choice == 1)):
+        result = "Rock"
+    elif ((choice.get() == "Scissors" and bot_element_choice == 2) or
+          (choice.get() == "Paper" and bot_element_choice == 3) or
+          (choice.get() == "Scissors" and bot_element_choice == 5) or
+          (choice.get() == "Lizard" and bot_element_choice == 3)):
+        result = "Scissors"
+    elif ((choice.get() == "Spock" and bot_element_choice == 1) or
+          (choice.get() == "Rock" and bot_element_choice == 4) or
+          (choice.get() == "Spock" and bot_element_choice == 3) or
+          (choice.get() == "Scissors" and bot_element_choice == 4)):
+        result = "Spock"
+    else:
+        result = "Lizard"
+
+#   Verify win conditions, evaluate winner and modify score labels
+    global player_score, bot_score
+    if choice.get() == result and bot_element_choice_text != result:
+        player_score = player_score + 1
+        player_score_label['text'] = "Player score: " + str(player_score)
+        messagebox.showinfo("Felicitari", "Felicitari! Ati castigat!")
+    elif bot_element_choice_text == result and choice.get() != result:
+        bot_score = bot_score + 1
+        bot_score_label['text'] = "Bot score: " + str(bot_score)
+        messagebox.showinfo("Nenorocire", "A castigat Bot-ul!")
+    else:
+        messagebox.showinfo("Egalitate", "Egalitate!")
 
 
 #   Downloads image of rules
@@ -101,8 +156,8 @@ choice_label = Label(game_layer_top_frame, text="Choose your element:", font="no
 choice_label.pack(side=LEFT)
 choice = StringVar(game_layer_top_frame)
 choice.set("Choose an option")
-dropdown_list = OptionMenu(game_layer_top_frame, choice, *choices)
-dropdown_list.pack(padx=3, pady=3, side=LEFT)
+choices_option_menu = OptionMenu(game_layer_top_frame, choice, *choices)
+choices_option_menu.pack(padx=3, pady=3, side=LEFT)
 
 #   Bot choice
 bot_choice = StringVar(game_layer_top_frame)
@@ -124,15 +179,15 @@ about_label.pack(padx=3, pady=3, side=LEFT)
 quit_button = Button(root_bottom_frame, text="Quit", width=22, font="none 12", command=root.destroy)
 quit_button.pack(padx=3, pady=3, side=RIGHT)
 
-#   Play button
-play_button = Button(game_layer_bottom_frame, text="Play", width=65, font="none 12", command=check_for_choice)
-play_button.pack(padx=3, pady=5)
-
 #   Score labels
 player_score_label = Label(score_frame, text="Player: " + str(player_score), font="none 12")
 player_score_label.pack(padx=60, pady=3, side=LEFT)
 bot_score_label = Label(score_frame, text="Bot: " + str(bot_score), font="none 12")
 bot_score_label.pack(padx=60, pady=3, side=RIGHT)
+
+#   Play button
+play_button = Button(game_layer_bottom_frame, text="Play", width=65, font="none 12", command=check_for_choice)
+play_button.pack(padx=3, pady=5)
 
 #   Launches root
 root.mainloop()
